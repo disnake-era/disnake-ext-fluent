@@ -101,7 +101,7 @@ class FluentStore(LocalizationProtocol):
         langs = search_languages(path)
         resources = search_ftl_files(path)
 
-        self._loader = FluentResourceLoader(str(path))
+        self._loader = FluentResourceLoader(str(path) + "/{locale}")
 
         for lang in langs:
             self._localizators[lang] = FluentLocalizator(
