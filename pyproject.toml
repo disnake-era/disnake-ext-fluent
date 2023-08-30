@@ -8,6 +8,7 @@ authors = [
 ]
 dependencies = [
     "disnake>=2.8",
+    "fluent-runtime>=0.4.0",
 ]
 requires-python = ">=3.8"
 readme = "README.md"
@@ -141,6 +142,9 @@ ignore = [
     "RET503",  # requires explicit `return None`
     "F403",    # basically disallows the usage of star imports
     "EM101",   # forces to not use string literals as exception messages
+    "EM102",   # same as above except for f-string literals
+    "TRY003",  # suggests making a custom exception class, but it's not rust so i gotta ignore this
+    "B028",    # requires explicit `stackelevel=...` in warnings.warn() calls
 ]
 
 [tool.towncrier]
