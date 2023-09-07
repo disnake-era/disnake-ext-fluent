@@ -1,7 +1,18 @@
 .. SPDX-License-Identifier: LGPL-3.0-only
 
+.. currentmodule:: disnake.ext.fluent
+
 API Reference
 =============
 
-.. automodule:: disnake.ext.fluent
+.. autoclass:: FluentStore
+    :members:
+
+.. autoclass:: FluentDisnakeProxy
+    :members:
+
+.. autofunction:: ~utils.search_ftl_files
+    :members:
+
+.. autofunction:: ~utils.search_languages
     :members:

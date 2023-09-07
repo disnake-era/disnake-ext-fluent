@@ -3,4 +3,8 @@
 import os
 from typing import Any, Union
 
+
+__all__ = ("PathT",)
+
+
 PathT = Union[str, os.PathLike[Any]]

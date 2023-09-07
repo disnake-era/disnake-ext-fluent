@@ -39,6 +39,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.extlinks",
     "sphinxcontrib.towncrier.ext",
+    "sphinx_rtd_theme",
 ]
 
 templates_path = ["_templates"]
@@ -49,8 +50,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "furo"
-html_static_path = ["_static"]
+html_theme = "sphinx_rtd_theme"
 
 # sphinxcontrib-towncrier config
 towncrier_draft_autoversion_mode = "draft"

@@ -7,3 +7,5 @@ __copyright__ = "Copyright 2023-present elenakrittik"
 __version__ = "0.1.0"
 
 from .fluent import *
+from .types import *
+from .utils import *

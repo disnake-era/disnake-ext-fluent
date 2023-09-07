@@ -5,6 +5,9 @@ from pathlib import Path
 from .types import PathT
 
 
+__all__ = ("search_ftl_files", "search_languages")
+
+
 def search_ftl_files(path: PathT) -> list[str]:
     """Search for FTL files in the provided directory.
 

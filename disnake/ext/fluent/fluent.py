@@ -1,8 +1,10 @@
 # SPDX-License-Identifier: LGPL-3.0-only
 
+from collections import UserDict
+import logging
 import warnings
 from pathlib import Path
-from typing import Any, Dict, Optional, Self, Union
+from typing import Any, Dict, List, Optional, Self, Union
 
 from disnake import Locale
 from disnake import LocalizationProtocol, LocalizationWarning, LocalizationKeyError
@@ -12,17 +14,17 @@ from .types import PathT
 from .utils import search_ftl_files, search_languages
 
 
+__all__ = ("FluentStore", "FluentDisnakeProxy")
+logger = logging.getLogger(__name__)
+
+
 class FluentStore(LocalizationProtocol):
     """:class:`disnake.LocalizationProtocol` implementation for Fluent.
 
     Parameters
     ----------
     strict: :class:`bool`
-        If ``True``, the store will raise an error if a key is not found.
-    command_ftl: :class:`str`
-        The name of the FTL file containing names, descriptions, etc. for commands and their
-        options. Defaults to ``"commands.ftl"``. Use "*" to indicate that all FTL files should
-        be searched in for localizations.
+        If ``True``, the store will raise an error if a key or locale is not found.
     default_language: :class:`str`
         The "fallback" language to use if localization for the desired languages is not found.
         Defaults to ``"en-US"``.
@@ -31,28 +33,25 @@ class FluentStore(LocalizationProtocol):
     """
 
     _strict: bool
-    _command_ftl: str
     _default_language: str
     _loader: Optional[FluentResourceLoader]
     _localizators: Dict[str, FluentLocalizator]
     _localization_cache: Dict[str, str]
-    _disnake_localizator: Optional[FluentLocalizator]
+    _disnake_localizators: Dict[str, "FluentDisnakeProxy"]  # localization key to proxy
 
     def __init__(
         self: Self,
         *,
         strict: bool = False,
-        command_ftl: str = "commands.ftl",
         default_language: str = "en-US",
     ) -> None:
         self._strict = strict
-        self._command_ftl = command_ftl
         self._default_language = default_language
 
         self._loader = None
         self._localizators = {}
         self._localization_cache = {}
-        self._disnake_localizator = None
+        self._disnake_localizators = {}
 
     def get(self: Self, key: str) -> Optional[Dict[str, str]]:
         """Localization retriever for disnake. You should use :meth:`.l10n` instead.
@@ -69,14 +68,20 @@ class FluentStore(LocalizationProtocol):
 
         Returns
         -------
-        Optional[Dict[:class:`str`, :class:`str`]]
+        Optional[:class:`FluentDisnakeProxy`]
             The localizations for the provided key.
             Returns ``None`` if no localizations could be found.
         """
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
 
-        return None  # fuck it for now
+        localizator = self._disnake_localizators.get(key)
+
+        if not localizator:
+            localizator = FluentDisnakeProxy(self, key)
+
+        return localizator  # type: ignore[reportGeneralTypeIssues]
+
 
     def load(self: Self, path: PathT) -> None:
         """Initialize internal :class:`FluentResourceLoader`.
@@ -152,3 +157,35 @@ class FluentStore(LocalizationProtocol):
         See :func:`.load` for possible raised exceptions.
         """
         raise NotImplementedError
+
+
+print("LOADING BRUH")
+
+
+class FluentDisnakeProxy(dict[str, Optional[str]]):
+    """Special proxy type for handling disnake commands'/options' localizations."""
+
+    _store: FluentStore
+    _key: str
+
+    def __init__(self: Self, store: FluentStore, key: str, langs: List[str]) -> None:
+        self._store = store
+        self._key = key
+
+        # TODO YOU MOTHERFUCKER DO THIS NOW BLYAT INITIALIZE THIS SUBDICT RIGHT FUCKING NOW
+
+    # while optionality is not explicitly documented, it does in fact work
+    # see also: https://github.com/DisnakeDev/disnake/issues/1103
+
+    def __getitem__(self: Self, __lang: str) -> Optional[str]:
+        return self.get(__lang)
+
+    def get(  # type: ignore[reportIncompatibleMethodOverride]
+        self: Self,
+        __lang: str,
+    ) -> Optional[str]:
+        print("HOLY SHITTT", self)
+        localized = self._store.l10n(self._key, __lang)
+        self[__lang] = localized
+        print("NOT HOLY SHITTT", self)
+        return localized

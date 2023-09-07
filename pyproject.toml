@@ -7,7 +7,7 @@ authors = [
     { name = "elenakrittik", email = "dev.elenakrittik@gmail.com" },
 ]
 dependencies = [
-    "disnake>=2.8",
+    "disnake==2.9.*",
     "fluent-runtime>=0.4.0",
 ]
 requires-python = ">=3.8"
@@ -51,8 +51,8 @@ docs = [
     "Sphinx>=7.1.2",
     "sphinxcontrib-trio>=1.1.2",
     "sphinx-autobuild>=2021.3.14",
-    "furo>=2023.8.19",
     "sphinxcontrib-towncrier>=0.3.2a0",
+    "sphinx-rtd-theme>=1.3.0",
 ]
 
 [tool.pdm.version]
@@ -65,7 +65,7 @@ docs = { cmd = "sphinx-autobuild docs docs/_build/html", help = "Run Sphinx docu
 lint = { cmd = "ruff ./disnake ./docs", help = "Run ruff" }
 pyright = { cmd = "pyright disnake docs", help = "Run pyright" }
 
-# Not intended for manual usage
+# You should generally use above commands instead
 yapf_check = { composite = ["yapf disnake --recursive --diff", "yapf docs --recursive --diff"] }
 setup_env = { cmd = "pdm install -d -G:all", help = "Set up the local environment and all dependencies" }
 post_setup_env = { cmd = "pre-commit install --install-hooks" }
