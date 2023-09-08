@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: LGPL-3.0-only
 
-from collections import UserDict
 import logging
 import warnings
 from pathlib import Path
@@ -13,7 +12,7 @@ from fluent.runtime import FluentResourceLoader, FluentLocalization as FluentLoc
 from .types import PathT
 from .utils import search_ftl_files, search_languages
 
-__all__ = ("FluentStore", "FluentDisnakeProxy")
+__all__ = ("FluentStore", )
 logger = logging.getLogger(__name__)
 
 
@@ -161,35 +160,3 @@ class FluentStore(LocalizationProtocol):
         See :func:`.load` for possible raised exceptions.
         """
         raise NotImplementedError
-
-
-print("LOADING BRUH")
-
-
-class FluentDisnakeProxy(dict[str, Optional[str]]):
-    """Special proxy type for handling disnake commands'/options' localizations."""
-
-    _store: FluentStore
-    _key: str
-
-    def __init__(self: Self, store: FluentStore, key: str, langs: List[str]) -> None:
-        self._store = store
-        self._key = key
-
-        # TODO YOU MOTHERFUCKER DO THIS NOW BLYAT INITIALIZE THIS SUBDICT RIGHT FUCKING NOW
-
-    # while optionality is not explicitly documented, it does in fact work
-    # see also: https://github.com/DisnakeDev/disnake/issues/1103
-
-    def __getitem__(self: Self, __lang: str) -> Optional[str]:
-        return self.get(__lang)
-
-    def get(  # type: ignore[reportIncompatibleMethodOverride]
-        self: Self,
-        __lang: str,
-    ) -> Optional[str]:
-        print("HOLY SHITTT", self)
-        localized = self._store.l10n(self._key, __lang)
-        self[__lang] = localized
-        print("NOT HOLY SHITTT", self)
-        return localized
