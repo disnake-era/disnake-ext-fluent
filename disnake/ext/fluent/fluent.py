@@ -13,7 +13,6 @@ from fluent.runtime import FluentResourceLoader, FluentLocalization as FluentLoc
 from .types import PathT
 from .utils import search_ftl_files, search_languages
 
-
 __all__ = ("FluentStore", "FluentDisnakeProxy")
 logger = logging.getLogger(__name__)
 
@@ -34,10 +33,11 @@ class FluentStore(LocalizationProtocol):
 
     _strict: bool
     _default_language: str
+    _langs: List[str]
     _loader: Optional[FluentResourceLoader]
     _localizators: Dict[str, FluentLocalizator]
     _localization_cache: Dict[str, str]
-    _disnake_localizators: Dict[str, "FluentDisnakeProxy"]  # localization key to proxy
+    _disnake_localization_cache: Dict[str, Dict[str, str]]
 
     def __init__(
         self: Self,
@@ -51,7 +51,7 @@ class FluentStore(LocalizationProtocol):
         self._loader = None
         self._localizators = {}
         self._localization_cache = {}
-        self._disnake_localizators = {}
+        self._disnake_localization_cache = {}
 
     def get(self: Self, key: str) -> Optional[Dict[str, str]]:
         """Localization retriever for disnake. You should use :meth:`.l10n` instead.
@@ -68,20 +68,24 @@ class FluentStore(LocalizationProtocol):
 
         Returns
         -------
-        Optional[:class:`FluentDisnakeProxy`]
+        Optional[Dict[:class:`str`, :class:`str`]]
             The localizations for the provided key.
             Returns ``None`` if no localizations could be found.
         """
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
 
-        localizator = self._disnake_localizators.get(key)
+        localizations = self._disnake_localization_cache.get(key)
 
-        if not localizator:
-            localizator = FluentDisnakeProxy(self, key)
+        if not localizations:
+            localizations = {}
 
-        return localizator  # type: ignore[reportGeneralTypeIssues]
+            for lang in self._langs:
+                localizations[lang] = self.l10n(key, lang)
 
+            self._disnake_localization_cache[key] = localizations
+
+        return localizations
 
     def load(self: Self, path: PathT) -> None:
         """Initialize internal :class:`FluentResourceLoader`.
@@ -103,12 +107,12 @@ class FluentStore(LocalizationProtocol):
         if not path.is_dir():
             raise RuntimeError(f"Path '{path}' does not exist or is not a directory.")
 
-        langs = search_languages(path)
+        self._langs = search_languages(path)
         resources = search_ftl_files(path)
 
         self._loader = FluentResourceLoader(str(path) + "/{locale}")
 
-        for lang in langs:
+        for lang in self._langs:
             self._localizators[lang] = FluentLocalizator(
                 [lang, self._default_language],
                 resources,
