@@ -52,6 +52,7 @@ dev = ["pre-commit>=3.3.3"]
 type-check = ["pyright>=1.1.324"]
 lint = ["ruff>=0.0.286"]
 format = ["yapf>=0.40.1"]
+# N.B. Keep in sync with docs/requirements.txt
 docs = [
     "Sphinx>=7.1.2",
     "sphinxcontrib-trio>=1.1.2",
