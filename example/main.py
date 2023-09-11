@@ -39,7 +39,9 @@ async def example(inter: disnake.AppCmdInter) -> None:
     await inter.response.send_message(
         # One would usually create a helper function for localizing stuff,
         # but we'll omit it here and use .`l10n()` directly.
-        bot.i18n.l10n("example_text", inter.locale, { "username": str(inter.author) }) or "Sorry", )
+        (bot.i18n.l10n("example_text", inter.locale, { "username": str(inter.author) }) or "Sorry") + \
+        (bot.i18n.l10n("example_text1", inter.locale) or "Sorry")
+    )
 
 
 token = os.environ.get("BOT_TOKEN")
@@ -47,4 +49,7 @@ token = os.environ.get("BOT_TOKEN")
 if not token:
     raise RuntimeError("You must set your bot token via BOT_TOKEN environment variable.")
 
-bot.run(token)
+try:
+    bot.run(token)
+except KeyboardInterrupt:
+    pass
