@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: LGPL-3.0-only
 
-import os
-from typing import Any, Callable, Union, TypeVar
+from typing import Any, Callable, Union, TypeVar, TYPE_CHECKING
 
 from fluent.runtime.types import (
     FluentDate,
@@ -13,6 +12,9 @@ from fluent.runtime.types import (
     FluentNumber,
     FluentType,
 )
+
+if TYPE_CHECKING:
+    import os
 
 # re-exports
 __all__ = (
@@ -33,6 +35,6 @@ def FluentBool(value: bool) -> str:
     return str(value).lower()
 
 
-PathT = Union[str, os.PathLike[Any]]
+PathT = Union[str, "os.PathLike[Any]"]
 ReturnT = TypeVar("ReturnT", bound = Union[FluentType, str])
 FluentFunction = Callable[..., ReturnT]
