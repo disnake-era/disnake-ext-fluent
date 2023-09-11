@@ -14,9 +14,6 @@ Classes
 Fluent Types
 ------------
 
-.. autoclass:: FluentText
-    :members:
-
 .. autoclass:: FluentBool
     :members:
 

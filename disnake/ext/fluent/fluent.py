@@ -3,7 +3,8 @@
 import logging
 import warnings
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Self, Union
+from typing import Any, Dict, List, Optional, Union
+from typing_extensions import Self
 
 from disnake import Locale
 from disnake import LocalizationProtocol, LocalizationWarning, LocalizationKeyError
@@ -121,7 +122,7 @@ class FluentStore(LocalizationProtocol):
 
         logger.info("Setting up FluentStore.")
         logger.debug(
-            f"Constructing localizators for locales {self._langs} using resource {resources}.", )
+            f"Constructing localizators for locales {self._langs} using resource {resources}.")
 
         self._loader = FluentResourceLoader(str(path) + "/{locale}")
 
@@ -138,7 +139,7 @@ class FluentStore(LocalizationProtocol):
         key: str,
         locale: Union[Locale, str],
         values: Optional[Dict[str, Any]] = None,
-    ) -> str | None:
+    ) -> Optional[str]:
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
 

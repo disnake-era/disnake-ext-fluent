@@ -9,6 +9,7 @@ authors = [
 dependencies = [
     "disnake==2.9.*",
     "fluent-runtime>=0.4.0",
+    "typing-extensions>=4.7.1",
 ]
 requires-python = ">=3.8"
 readme = "README.md"
@@ -99,6 +100,7 @@ reportMissingTypeStubs = false
 # devs should not interfere with pdm defaults, otherwise it's up to them to fix arising issues
 venvPath = "."
 venv = ".venv"
+pythonVersion = "3.8"
 
 [tool.yapf]
 based_on_style = "pep8"
