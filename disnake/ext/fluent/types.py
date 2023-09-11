@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: LGPL-3.0-only
 
 import os
-from typing import Any, Callable, Self, Union, TypeVar
-import babel
+from typing import Any, Callable, Union, TypeVar
 
 from fluent.runtime.types import (
     FluentDate,
@@ -24,36 +23,16 @@ __all__ = (
     "FluentInt",
     "FluentNone",
     "FluentNumber",
-    "FluentText",
     "FluentBool",
     "FluentType",
 )
 
 
-class FluentText(FluentType):
-    """Fluent type for raw, non-localizable strings."""
-
-    _inner: str
-
-    def __init__(self: Self, inner: str) -> None:
-        self._inner = inner
-
-    def format(self: Self, locale: babel.Locale) -> str:
-        return self._inner
-
-
-class FluentBool(FluentType):
-    """Fluent type for booleans."""
-
-    _inner: bool
-
-    def __init__(self: Self, inner: bool) -> None:
-        self._inner = inner
-
-    def format(self: Self, locale: babel.Locale) -> str:
-        return "true" if self._inner else "false"
+def FluentBool(value: bool) -> str:
+    """Transform boolean value to lowercase string."""
+    return str(value).lower()
 
 
 PathT = Union[str, os.PathLike[Any]]
-ReturnT = TypeVar("ReturnT", bound = FluentType)
+ReturnT = TypeVar("ReturnT", bound = Union[FluentType, str])
 FluentFunction = Callable[..., ReturnT]

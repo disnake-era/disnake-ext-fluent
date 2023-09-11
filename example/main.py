@@ -1,8 +1,11 @@
+# SPDX-License-Identifier: LGPL-3.0-only
+
 import os
 import datetime
 
 import disnake
 from disnake.ext import commands, fluent  # This library is packaged as disnake.ext.fluent
+import contextlib
 
 
 # You should typically use a custom bot class and type hint `.i18n` approritately.
@@ -14,11 +17,13 @@ class MyBot(commands.InteractionBot):
 # this extension, and return single value of any `Fluent*` type.
 # Read more here: https://projectfluent.org/python-fluent/fluent.runtime/stable/usage.html#custom-functions
 # You can also create your own fluent types by subclassing `FluentType`.
-def is_monday() -> fluent.FluentBool:
-    return fluent.FluentBool(datetime.date.today().isoweekday() == 1)
+def check_week_day(day: fluent.FluentNumber) -> str:
+    return fluent.FluentBool(datetime.date.today().isoweekday() == day)
 
 
-bot = MyBot(localization_provider = fluent.FluentStore(functions = { "IS_MONDAY": is_monday }))
+bot = MyBot(localization_provider = fluent.FluentStore(functions = {
+    "CHECK_WEEK_DAY": check_week_day,
+}))
 
 # As eveything else in Python ("unless explicitly stated otherwise"), directory path below
 # is relative to where you run this from, not where this file is.
@@ -34,14 +39,13 @@ async def on_ready() -> None:
 
 
 @bot.slash_command(  # type: ignore[reportUnknownMemberType]  # please ignore this
-    description = disnake.Localized("Oops, something went wrong.", key = "example_desc"), )
+    description = disnake.Localized("Oops, something went wrong.", key = "example_desc"))
 async def example(inter: disnake.AppCmdInter) -> None:
     await inter.response.send_message(
         # One would usually create a helper function for localizing stuff,
         # but we'll omit it here and use .`l10n()` directly.
-        (bot.i18n.l10n("example_text", inter.locale, { "username": str(inter.author) }) or "Sorry") + \
-        (bot.i18n.l10n("example_text1", inter.locale) or "Sorry")
-    )
+        (bot.i18n.l10n("example_text", inter.locale, { "username": str(inter.author) }) or "Sorry.")
+        + " " + (bot.i18n.l10n("example_text1", inter.locale) or "Sorry."))
 
 
 token = os.environ.get("BOT_TOKEN")
@@ -49,7 +53,5 @@ token = os.environ.get("BOT_TOKEN")
 if not token:
     raise RuntimeError("You must set your bot token via BOT_TOKEN environment variable.")
 
-try:
+with contextlib.suppress(KeyboardInterrupt):
     bot.run(token)
-except KeyboardInterrupt:
-    pass

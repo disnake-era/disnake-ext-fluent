@@ -4,7 +4,7 @@
 
 `LocalizationProtocol` implementation for projects using Fluent.
 
-For typical usage example, see [here](./example).
+For usage example, see [the `example` folder](./example).
 
 This library supports `logging`.
 
