@@ -2,7 +2,7 @@
 
 [project]
 name = "disnake-ext-fluent"
-description = "`LocalizationProtocol` implementation for projects using Fluent."
+description = "Path to high-quality bot translations, opened."
 authors = [
     { name = "elenakrittik", email = "dev.elenakrittik@gmail.com" },
 ]
@@ -38,6 +38,10 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
+
+[project.urls]
+Repository = "https://github.com/disnake-era/disnake-ext-fluent"
+Documentation = "https://disnake-ext-fluent.readthedocs.io/"
 
 [build-system]
 requires = ["pdm-backend"]
