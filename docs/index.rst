@@ -14,5 +14,3 @@ Welcome to RPGcord's documentation!
 
    api.rst
    changelog.rst
-
-Tutorial soon:TM:

@@ -5,14 +5,57 @@
 API Reference
 =============
 
+Classes
+-------
+
 .. autoclass:: FluentStore
     :members:
 
-.. autoclass:: FluentDisnakeProxy
+Fluent Types
+------------
+
+.. autoclass:: FluentText
     :members:
 
-.. autofunction:: ~utils.search_ftl_files
+.. autoclass:: FluentBool
     :members:
 
-.. autofunction:: ~utils.search_languages
-    :members:
+Re-exports from ``fluent.runtime``
+----------------------------------
+
+.. autofunction:: fluent_date
+
+    See :doc:`fluent:usage`.
+
+.. autofunction:: fluent_number
+
+    See :doc:`fluent:usage`.
+
+
+.. autoclass:: FluentDate
+
+    See :doc:`fluent:usage`.
+
+.. autoclass:: FluentDateTime
+
+    See :doc:`fluent:usage`.
+
+.. autoclass:: FluentDecimal
+
+    See :doc:`fluent:usage`.
+
+.. autoclass:: FluentFloat
+
+    See :doc:`fluent:usage`.
+
+.. autoclass:: FluentInt
+
+    See :doc:`fluent:usage`.
+
+.. autoclass:: FluentNone
+
+    See :doc:`fluent:usage`.
+
+.. autoclass:: FluentNumber
+
+    See :doc:`fluent:usage`.

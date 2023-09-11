@@ -24,7 +24,7 @@ with open("../disnake/ext/fluent/__init__.py") as f:
     if not matches:
         raise RuntimeError( \
             "Could not find version string in disnake/ext/fluent/__init__.py" \
-        )  # noqa: TRY003
+        )
 
     version = matches.group(1)
 
@@ -38,6 +38,7 @@ github_repo_url = "https://github.com/elenakrittik/disnake-ext-fluent"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.extlinks",
+    "sphinx.ext.intersphinx",
     "sphinxcontrib.towncrier.ext",
     "sphinx_rtd_theme",
 ]
@@ -59,4 +60,10 @@ towncrier_draft_working_directory = Path(__file__).parent.parent
 
 extlinks = {
     "issue": (f"{github_repo_url}/issues/%s", "#%s"),
+}
+
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3/", None),
+    "disnake": ("https://docs.disnake.dev/en/stable/", None),
+    "fluent": ("https://projectfluent.org/python-fluent/fluent.runtime/stable/", None),
 }

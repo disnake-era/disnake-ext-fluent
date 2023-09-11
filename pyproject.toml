@@ -60,13 +60,21 @@ source = "file"
 path = "disnake/ext/fluent/__init__.py"
 
 [tool.pdm.scripts]
-format = { composite = ["yapf disnake --recursive --in-place", "yapf docs --recursive --in-place"], help = "Run yapf" }
+format = { composite = [
+    "yapf disnake --recursive --in-place",
+    "yapf docs --recursive --in-place",
+    "yapf example --recursive --diff",
+], help = "Run yapf" }
 docs = { cmd = "sphinx-autobuild docs docs/_build/html", help = "Run Sphinx documentation server" }
-lint = { cmd = "ruff ./disnake ./docs", help = "Run ruff" }
-pyright = { cmd = "pyright disnake docs", help = "Run pyright" }
+lint = { cmd = "ruff ./disnake ./docs ./example", help = "Run ruff" }
+pyright = { cmd = "pyright disnake docs example", help = "Run pyright" }
 
 # You should generally use above commands instead
-yapf_check = { composite = ["yapf disnake --recursive --diff", "yapf docs --recursive --diff"] }
+yapf_check = { composite = [
+    "yapf disnake --recursive --diff",
+    "yapf docs --recursive --diff",
+    "yapf example --recursive --diff",
+] }
 setup_env = { cmd = "pdm install -d -G:all", help = "Set up the local environment and all dependencies" }
 post_setup_env = { cmd = "pre-commit install --install-hooks" }
 
@@ -145,6 +153,11 @@ ignore = [
     "EM102",   # same as above except for f-string literals
     "TRY003",  # suggests making a custom exception class, but it's not rust so i gotta ignore this
     "B028",    # requires explicit `stackelevel=...` in warnings.warn() calls
+]
+
+[tool.ruff.per-file-ignores]
+"example/main.py" = [
+    "DTZ011",  # requires explicit timezone in datetime functions
 ]
 
 [tool.towncrier]

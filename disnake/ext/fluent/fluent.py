@@ -9,7 +9,7 @@ from disnake import Locale
 from disnake import LocalizationProtocol, LocalizationWarning, LocalizationKeyError
 from fluent.runtime import FluentResourceLoader, FluentLocalization as FluentLocalizator
 
-from .types import PathT
+from .types import FluentFunction, PathT, ReturnT
 from .utils import search_ftl_files, search_languages
 
 __all__ = ("FluentStore", )
@@ -22,7 +22,8 @@ class FluentStore(LocalizationProtocol):
     Parameters
     ----------
     strict: :class:`bool`
-        If ``True``, the store will raise an error if a key or locale is not found.
+        If ``True``, the store will raise :exc:`disnake.LocalizationKeyError` if a key or
+        locale is not found.
     default_language: :class:`str`
         The "fallback" language to use if localization for the desired languages is not found.
         Defaults to ``"en-US"``.
@@ -37,20 +38,25 @@ class FluentStore(LocalizationProtocol):
     _localizators: Dict[str, FluentLocalizator]
     _localization_cache: Dict[str, str]
     _disnake_localization_cache: Dict[str, Dict[str, str]]
+    _functions: Optional[Dict[str, FluentFunction[Any]]]
 
     def __init__(
         self: Self,
         *,
         strict: bool = False,
         default_language: str = "en-US",
+        functions: Optional[Dict[str, FluentFunction[ReturnT]]] = None,
     ) -> None:
         self._strict = strict
         self._default_language = default_language
+        self._functions = functions
 
         self._loader = None
         self._localizators = {}
         self._localization_cache = {}
         self._disnake_localization_cache = {}
+
+        logger.info("FluentStore initialized.")
 
     def get(self: Self, key: str) -> Optional[Dict[str, str]]:
         """Localization retriever for disnake. You should use :meth:`.l10n` instead.
@@ -74,9 +80,13 @@ class FluentStore(LocalizationProtocol):
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
 
+        logger.debug(f"disnake requested localizations for key {key}")
+
         localizations = self._disnake_localization_cache.get(key)
 
         if not localizations:
+            logger.debug(f"disnake cache miss for key {key}")
+
             localizations = {}
 
             for lang in self._langs:
@@ -87,7 +97,7 @@ class FluentStore(LocalizationProtocol):
         return localizations
 
     def load(self: Self, path: PathT) -> None:
-        """Initialize internal :class:`FluentResourceLoader`.
+        """Initialize all internal attributes.
 
         `path` must point to a directory structured as per Fluent's guidelines.
 
@@ -109,6 +119,10 @@ class FluentStore(LocalizationProtocol):
         self._langs = search_languages(path)
         resources = search_ftl_files(path)
 
+        logger.info("Setting up FluentStore.")
+        logger.debug(
+            f"Constructing localizators for locales {self._langs} using resource {resources}.", )
+
         self._loader = FluentResourceLoader(str(path) + "/{locale}")
 
         for lang in self._langs:
@@ -116,6 +130,7 @@ class FluentStore(LocalizationProtocol):
                 [lang, self._default_language],
                 resources,
                 self._loader,
+                functions = self._functions,
             )
 
     def l10n(
@@ -127,13 +142,17 @@ class FluentStore(LocalizationProtocol):
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
 
+        logger.debug(f"Localization requested for key {key} and locale {locale!s}.")
+
         if cached := self._localization_cache.get(key + ":" + str(locale)):
             return cached
+
+        logger.debug(f"Regular cache miss for key {key} and locale {locale!s}.")
 
         localizator = self._localizators.get(str(locale))
 
         if not localizator:
-            warnings.warn(f"Localizator not found for locale {locale}.", LocalizationWarning)
+            warnings.warn(f"Localizator not found for locale {locale!s}.", LocalizationWarning)
             return None
 
         values = values or {}
@@ -154,9 +173,11 @@ class FluentStore(LocalizationProtocol):
         return None
 
     def reload(self: Self) -> None:
-        """Clear localizations and reload all previously loaded files/directories again.
+        """Clear localizations and reload all previously loaded FTLs again.
 
         If an exception occurs, the previous data gets restored and the exception is re-raised.
         See :func:`.load` for possible raised exceptions.
+
+        Not implemented yet.
         """
         raise NotImplementedError

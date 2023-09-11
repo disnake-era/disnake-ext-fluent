@@ -4,6 +4,10 @@
 
 `LocalizationProtocol` implementation for projects using Fluent.
 
+For typical usage example, see [here](./example).
+
+This library supports `logging`.
+
 ## Version Guarantees
 
 This project strictly follows [Cargo SemVer](https://doc.rust-lang.org/cargo/reference/semver.html).
@@ -22,7 +26,7 @@ This scheme allows the project to give strong version guarantees without comprom
 of development and improvement and without breaking people's expectations. (If some project wants
 to strictly follow the "official" SemVer *and* frequently make breaking changes (for the better,
 we hope), they must constantly increase the major version number, which after just 5 breaking
-changes results in project's version being "5.x.x", which in turn can give observers falsy look of
+changes results in project's version being "5.x.x", which in turn may give observers falsy look of
 a "mature, stable and long-in-development" project).
 
 ## License

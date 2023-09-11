@@ -4,8 +4,9 @@ from pathlib import Path
 
 from .types import PathT
 
+from fluent.runtime.types import fluent_date, fluent_number
 
-__all__ = ("search_ftl_files", "search_languages")
+__all__ = ("fluent_date", "fluent_number")
 
 
 def search_ftl_files(path: PathT) -> list[str]:
