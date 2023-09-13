@@ -1,0 +1,1 @@
+Add :attr:`FluentStore.CACHE_BY_DEFAULT` to control the default for ``cache``.
