@@ -3,7 +3,7 @@
 import logging
 import warnings
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing_extensions import Self
 
 from disnake import Locale
@@ -20,6 +20,14 @@ logger = logging.getLogger(__name__)
 class FluentStore(LocalizationProtocol):
     """:class:`disnake.LocalizationProtocol` implementation for Fluent.
 
+    Attributes
+    ----------
+    CACHE_BY_DEFAULT: ClassVar[:class:`str`]
+        Controls the default value for ``cache`` in :meth:`.l10n`.
+        Does not affect caching of static-by-definition keys like
+        application commands' names/descriptions.
+        Defaults to ``False``.
+
     Parameters
     ----------
     strict: :class:`bool`
@@ -31,6 +39,8 @@ class FluentStore(LocalizationProtocol):
 
     .. versionadded:: 0.1.0
     """
+
+    CACHE_BY_DEFAULT: ClassVar[bool] = False
 
     _strict: bool
     _default_language: str
@@ -139,16 +149,21 @@ class FluentStore(LocalizationProtocol):
         key: str,
         locale: Union[Locale, str],
         values: Optional[Dict[str, Any]] = None,
+        cache: Optional[bool] = None,
     ) -> Optional[str]:
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
 
         logger.debug(f"Localization requested for key {key} and locale {locale!s}.")
 
-        if cached := self._localization_cache.get(key + ":" + str(locale)):
-            return cached
+        cache = cache or FluentStore.CACHE_BY_DEFAULT
+        cache_key = key + ":" + str(locale) + ":" + str(values)
 
-        logger.debug(f"Regular cache miss for key {key} and locale {locale!s}.")
+        if cache:
+            if cached := self._localization_cache.get(cache_key):
+                return cached
+
+            logger.debug(f"Regular cache miss for key {key} and locale {locale!s}.")
 
         localizator = self._localizators.get(str(locale))
 
@@ -161,7 +176,8 @@ class FluentStore(LocalizationProtocol):
         localized = localizator.format_value(key, values)
 
         if localized != key:  # translation *was* found
-            self._localization_cache[key + ":" + str(locale)] = localized
+            if cache:
+                self._localization_cache[cache_key] = localized
             return localized
 
         # translation was *not* found
