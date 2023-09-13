@@ -19,6 +19,8 @@ from fluent.runtime.types import (
 
 if TYPE_CHECKING:
     import os
+
+    from typing_extensions import Self
     import babel
 
 # re-exports
@@ -31,6 +33,7 @@ __all__ = (
     "FluentNone",
     "FluentNumber",
     "FluentBool",
+    "FluentTime",
     "FluentType",
 )
 
@@ -43,10 +46,10 @@ def FluentBool(value: bool) -> str:
 class FluentTime(FluentType):
     _time: datetime.time
 
-    def __init__(self, time_: Optional[datetime.time] = None) -> None:
-        self._time = time_ or datetime.datetime.now().time()
+    def __init__(self: Self, time_: Optional[datetime.time] = None) -> None:
+        self._time = time_ or datetime.datetime.now(tz = datetime.timezone.utc).time()
 
-    def format(self, locale: babel.Locale) -> str:
+    def format(self: Self, locale: babel.Locale) -> str:
         return format_time(self._time)
 
 

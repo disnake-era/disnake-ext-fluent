@@ -16,7 +16,7 @@ class MyBot(commands.InteractionBot):
 # this extension, and return single value of any `Fluent*` type.
 # Read more here: https://projectfluent.org/python-fluent/fluent.runtime/stable/usage.html#custom-functions
 # You can also create your own fluent types by subclassing `FluentType`.
-def current_time() -> str:
+def current_time() -> fluent.FluentTime:
     return fluent.FluentTime()
 
 
@@ -50,7 +50,7 @@ async def example(inter: disnake.AppCmdInter) -> None:
 @bot.slash_command()  # type: ignore[reportUnknownMemberType]  # please ignore this
 async def another_example(inter: disnake.AppCmdInter) -> None:
     await inter.response.send_message(
-        bot.i18n.l10n("another_example_text", inter.locale) or "Sorry.")
+        bot.i18n.l10n("another_example_text", inter.locale, cache = True) or "Sorry.")
 
 
 token = os.environ.get("BOT_TOKEN")
