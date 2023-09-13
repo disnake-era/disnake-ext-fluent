@@ -28,7 +28,7 @@ repos:
         args: [--negate]
         types: [text]
         exclude_types: [json, pofile]
-        exclude: '.vscode/|.gitignore|LICENSE|changelog/|py.typed|.github/PULL_REQUEST_TEMPLATE.md|LICENSE|MANIFEST.in|docs/requirements.txt'
+        exclude: '.vscode/|.gitignore|LICENSE|changelogs/|py.typed|.github/PULL_REQUEST_TEMPLATE.md|LICENSE|MANIFEST.in|docs/requirements.txt'
 
 
   - repo: https://github.com/google/yapf
