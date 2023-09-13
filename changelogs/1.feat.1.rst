@@ -1,1 +1,0 @@
-Add ``cache`` parameter to :meth:`FluentStore.l10n` to control caching at localization-level.
