@@ -5,7 +5,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to RPGcord's documentation!
+Welcome to disnake-ext-fluent's documentation!
 ===================================
 
 .. toctree::
