@@ -4,6 +4,12 @@ name: Check with Ruff
 
 on:
   push:
+    paths:
+      - .github
+      - disnake
+      - docs/conf.py
+      - example
+      - pyproject.toml
 
 jobs:
   check_with_ruff:

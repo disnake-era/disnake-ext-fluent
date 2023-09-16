@@ -1,5 +1,3 @@
-<!-- SPDX-License-Identifier: LGPL-3.0-only -->
-
 ## Summary
 
 <!-- What is this pull request for? Does it fix any issues? -->

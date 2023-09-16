@@ -20,10 +20,14 @@ def current_time() -> fluent.FluentTime:
     return fluent.FluentTime()
 
 
-bot = MyBot(localization_provider = fluent.FluentStore(
-    functions = {
-        "CURRENT_TIME": current_time,  # Mapping of fluent function names to actual fluent functions
-    }))
+bot = MyBot(
+    localization_provider = fluent.FluentStore(
+        functions = {
+            "CURRENT_TIME":
+            current_time,  # Mapping of fluent function names to actual fluent functions
+        },
+    ),
+)
 
 # As eveything else in Python ("unless explicitly stated otherwise"), directory path below
 # is relative to where you run this from, not where this file is.
@@ -44,14 +48,17 @@ async def example(inter: disnake.AppCmdInter) -> None:
     await inter.response.send_message(
         # One would usually create a helper function for localizing stuff,
         # but we'll omit it here and use .`l10n()` directly.
-        bot.i18n.l10n("example_text", inter.locale, { "username": str(inter.author) }, cache = True)
-        or "Sorry.")
+        bot.i18n
+        .l10n("example_text", inter.locale, { "username": str(inter.author) }, cache = True)
+        or "Sorry.",
+    )
 
 
 @bot.slash_command()  # type: ignore[reportUnknownMemberType]  # please ignore this
 async def another_example(inter: disnake.AppCmdInter) -> None:
     await inter.response.send_message(
-        bot.i18n.l10n("another_example_text", inter.locale) or "Sorry.")
+        bot.i18n.l10n("another_example_text", inter.locale) or "Sorry.",
+    )
 
 
 token = os.environ.get("BOT_TOKEN")

@@ -1,18 +1,12 @@
 # SPDX-License-Identifier: LGPL-3.0-only
 
-name: Check formatting
+name: Check with pre-commit
 
 on:
   push:
-    paths:
-      - .github
-      - disnake
-      - docs/conf.py
-      - example
-      - pyproject.toml
 
 jobs:
-  check_formatting:
+  check_with_pre-commit:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,5 +22,5 @@ jobs:
         cache: true
         cache-dependency-path: 'pyproject.toml'
 
-    - run: pdm install -Gformat
-    - run: pdm run yapf_check
+    - run: pdm install -G:all
+    - run: pdm run pre-commit run --all-files

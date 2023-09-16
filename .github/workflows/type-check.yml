@@ -4,6 +4,12 @@ name: Check typing
 
 on:
   push:
+    paths:
+      - .github
+      - disnake
+      - docs/conf.py
+      - example
+      - pyproject.toml
 
 jobs:
   check_typing:

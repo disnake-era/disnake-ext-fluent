@@ -4,6 +4,12 @@ name: Build docs
 
 on:
   push:
+    paths:
+      - .github
+      - changelogs
+      - disnake
+      - docs
+      # NOTE: No need for pyproject.toml here as both config and deps are in docs/ already.
 
 jobs:
   build_docs:

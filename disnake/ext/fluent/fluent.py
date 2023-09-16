@@ -132,7 +132,8 @@ class FluentStore(LocalizationProtocol):
 
         logger.info("Setting up FluentStore.")
         logger.debug(
-            f"Constructing localizators for locales {self._langs} using resource {resources}.")
+            f"Constructing localizators for locales {self._langs} using resource {resources}.",
+        )
 
         self._loader = FluentResourceLoader(str(path) + "/{locale}")
 
