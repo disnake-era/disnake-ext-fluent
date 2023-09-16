@@ -44,7 +44,8 @@ async def example(inter: disnake.AppCmdInter) -> None:
     await inter.response.send_message(
         # One would usually create a helper function for localizing stuff,
         # but we'll omit it here and use .`l10n()` directly.
-        bot.i18n.l10n("example_text", inter.locale, { "username": str(inter.author) }, cache = True) or "Sorry.")
+        bot.i18n.l10n("example_text", inter.locale, { "username": str(inter.author) }, cache = True)
+        or "Sorry.")
 
 
 @bot.slash_command()  # type: ignore[reportUnknownMemberType]  # please ignore this
