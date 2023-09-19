@@ -18,7 +18,7 @@ dynamic = ["version"]
 keywords = [
     "disnake",
     "disnake-era",
-    "disnake.ext",
+    "disnake-extension",
     "discord",
     "fluent",
     "projectfluent",
