@@ -18,7 +18,7 @@ from .utils import search_ftl_files, search_languages
 if TYPE_CHECKING:
     from .types import FluentFunction, PathT, ReturnT
 
-__all__ = ("FluentStore", )
+__all__ = ("FluentStore",)
 logger = logging.getLogger(__name__)
 
 
@@ -53,7 +53,7 @@ class FluentStore(LocalizationProtocol):
     _loader: FluentResourceLoader | None
     _localizators: dict[str, FluentLocalizator]
     _localization_cache: dict[str, str]
-    _disnake_localization_cache: dict[str, dict[str, str]]
+    _disnake_localization_cache: dict[str, dict[str, str | None]]
     _functions: dict[str, FluentFunction[Any]] | None
 
     def __init__(
@@ -98,7 +98,7 @@ class FluentStore(LocalizationProtocol):
 
         logger.debug("disnake requested localizations for key %s", key)
 
-        localizations = self._disnake_localization_cache.get(key)
+        localizations: dict[str, str | None] | None = self._disnake_localization_cache.get(key)
 
         if not localizations:
             logger.debug("disnake cache miss for key %s", key)
@@ -110,7 +110,7 @@ class FluentStore(LocalizationProtocol):
 
             self._disnake_localization_cache[key] = localizations
 
-        return localizations
+        return localizations  # type: ignore # disnake *does* support this
 
     def load(self: Self, path: PathT) -> None:
         """Initialize all internal attributes.
@@ -149,7 +149,7 @@ class FluentStore(LocalizationProtocol):
                 [lang, self._default_language],
                 resources,
                 self._loader,
-                functions = self._functions,
+                functions=self._functions,
             )
 
     def l10n(

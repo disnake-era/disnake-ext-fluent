@@ -30,18 +30,13 @@ repos:
         exclude_types: [json, pofile]
         exclude: '.vscode/|.gitignore|LICENSE|changelogs/|py.typed|.github/PULL_REQUEST_TEMPLATE.md|docs/requirements.txt|ACKNOWLEDGEMENTS.md'
 
-
-  - repo: https://github.com/google/yapf
-    rev: v0.40.1
-    hooks:
-      - id: yapf
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.285
+    rev: v0.1.11
     hooks:
       - id: ruff
+      - id: ruff-format
 
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.323
+    rev: v1.1.344
     hooks:
     - id: pyright

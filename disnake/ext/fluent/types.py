@@ -48,12 +48,12 @@ class FluentTime(FluentType):
     _time: datetime.time
 
     def __init__(self: Self, time_: datetime.time | None = None) -> None:
-        self._time = time_ or datetime.datetime.now(tz = datetime.timezone.utc).time()
+        self._time = time_ or datetime.datetime.now(tz=datetime.timezone.utc).time()
 
     def format(self: Self, locale: babel.Locale) -> str:  # noqa: A003, ARG002
         return format_time(self._time)
 
 
 PathT = Union[str, "os.PathLike[Any]"]
-ReturnT = TypeVar("ReturnT", bound = Union[FluentType, str])
+ReturnT = TypeVar("ReturnT", bound=Union[FluentType, str])
 FluentFunction = Callable[..., ReturnT]

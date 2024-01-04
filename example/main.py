@@ -9,7 +9,7 @@ from disnake.ext import commands, fluent  # This library is packaged as disnake.
 
 # You should typically use a custom bot class and type hint `.i18n` approritately.
 class MyBot(commands.InteractionBot):
-    i18n: fluent.FluentStore
+    i18n: fluent.FluentStore  # type: ignore
 
 
 # Custom functions take any number of arguments of any `Fluent*` type from
@@ -21,10 +21,9 @@ def current_time() -> fluent.FluentTime:
 
 
 bot = MyBot(
-    localization_provider = fluent.FluentStore(
-        functions = {
-            "CURRENT_TIME":
-            current_time,  # Mapping of fluent function names to actual fluent functions
+    localization_provider=fluent.FluentStore(
+        functions={
+            "CURRENT_TIME": current_time,  # Mapping of fluent function names to actual fluent functions
         },
     ),
 )
@@ -43,13 +42,13 @@ async def on_ready() -> None:
 
 
 @bot.slash_command(  # type: ignore[reportUnknownMemberType]  # please ignore this
-    description=disnake.Localized("Oops, something went wrong.", key="example_desc"))
+    description=disnake.Localized("Oops, something went wrong.", key="example_desc")
+)
 async def example(inter: disnake.AppCmdInter) -> None:
     await inter.response.send_message(
         # One would usually create a helper function for localizing stuff,
         # but we'll omit it here and use .`l10n()` directly.
-        bot.i18n
-        .l10n("example_text", inter.locale, { "username": str(inter.author) }, cache = True)
+        bot.i18n.l10n("example_text", inter.locale, {"username": str(inter.author)}, cache=True)
         or "Sorry.",
     )
 

@@ -18,14 +18,13 @@ copyright = "2023-present, elenakrittik"  # noqa: A001
 author = "elenakrittik"
 
 version = ""
-with Path("../disnake/ext/fluent/__init__.py",
-          ).open(encoding = locale.getpreferredencoding(False) ) as f:
+with Path(
+    "../disnake/ext/fluent/__init__.py",
+).open(encoding=locale.getpreferredencoding(False)) as f:
     matches = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE)
 
     if not matches:
-        raise RuntimeError(\
-            "Could not find version string in disnake/ext/fluent/__init__.py" \
-        )
+        raise RuntimeError("Could not find version string in disnake/ext/fluent/__init__.py")
 
     version = matches.group(1)
 
@@ -47,7 +46,7 @@ extensions = [
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-sys.path.insert(0, Path("..").resolve())
+sys.path.insert(0, str(Path("..").resolve()))
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
