@@ -8,21 +8,22 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-from pathlib import Path
+import locale
 import re
-import os
 import sys
+from pathlib import Path
 
 project = "disnake-ext-fluent"
-copyright = "2023-present, elenakrittik"
+copyright = "2023-present, elenakrittik"  # noqa: A001
 author = "elenakrittik"
 
 version = ""
-with open("../disnake/ext/fluent/__init__.py") as f:
+with Path("../disnake/ext/fluent/__init__.py",
+          ).open(encoding = locale.getpreferredencoding(False) ) as f:
     matches = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE)
 
     if not matches:
-        raise RuntimeError( \
+        raise RuntimeError(\
             "Could not find version string in disnake/ext/fluent/__init__.py" \
         )
 
@@ -46,7 +47,7 @@ extensions = [
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, Path("..").resolve())
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

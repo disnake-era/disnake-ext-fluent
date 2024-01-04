@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any, Callable, Union, TypeVar, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, TypeVar, Union
 
 from babel.dates import format_time
+
 from fluent.runtime.types import (
     FluentDate,
     FluentDateTime,
@@ -20,8 +21,8 @@ from fluent.runtime.types import (
 if TYPE_CHECKING:
     import os
 
-    from typing_extensions import Self
     import babel
+    from typing_extensions import Self
 
 # re-exports
 __all__ = (
@@ -38,7 +39,7 @@ __all__ = (
 )
 
 
-def FluentBool(value: bool) -> str:
+def FluentBool(value: bool) -> str:  # noqa: N802, FBT001
     """Transform boolean value to lowercase string."""
     return str(value).lower()
 
@@ -46,10 +47,10 @@ def FluentBool(value: bool) -> str:
 class FluentTime(FluentType):
     _time: datetime.time
 
-    def __init__(self: Self, time_: Optional[datetime.time] = None) -> None:
+    def __init__(self: Self, time_: datetime.time | None = None) -> None:
         self._time = time_ or datetime.datetime.now(tz = datetime.timezone.utc).time()
 
-    def format(self: Self, locale: babel.Locale) -> str:
+    def format(self: Self, locale: babel.Locale) -> str:  # noqa: A003, ARG002
         return format_time(self._time)
 
 

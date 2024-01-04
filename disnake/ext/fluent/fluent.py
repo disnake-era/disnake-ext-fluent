@@ -1,17 +1,22 @@
 # SPDX-License-Identifier: LGPL-3.0-only
 
+from __future__ import annotations
+
 import logging
 import warnings
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, ClassVar
+
 from typing_extensions import Self
 
-from disnake import Locale
-from disnake import LocalizationProtocol, LocalizationWarning, LocalizationKeyError
-from fluent.runtime import FluentResourceLoader, FluentLocalization as FluentLocalizator
+from disnake import Locale, LocalizationKeyError, LocalizationProtocol, LocalizationWarning
+from fluent.runtime import FluentLocalization as FluentLocalizator
+from fluent.runtime import FluentResourceLoader
 
-from .types import FluentFunction, PathT, ReturnT
 from .utils import search_ftl_files, search_languages
+
+if TYPE_CHECKING:
+    from .types import FluentFunction, PathT, ReturnT
 
 __all__ = ("FluentStore", )
 logger = logging.getLogger(__name__)
@@ -44,19 +49,19 @@ class FluentStore(LocalizationProtocol):
 
     _strict: bool
     _default_language: str
-    _langs: List[str]
-    _loader: Optional[FluentResourceLoader]
-    _localizators: Dict[str, FluentLocalizator]
-    _localization_cache: Dict[str, str]
-    _disnake_localization_cache: Dict[str, Dict[str, str]]
-    _functions: Optional[Dict[str, FluentFunction[Any]]]
+    _langs: list[str]
+    _loader: FluentResourceLoader | None
+    _localizators: dict[str, FluentLocalizator]
+    _localization_cache: dict[str, str]
+    _disnake_localization_cache: dict[str, dict[str, str]]
+    _functions: dict[str, FluentFunction[Any]] | None
 
     def __init__(
         self: Self,
         *,
         strict: bool = False,
         default_language: str = "en-US",
-        functions: Optional[Dict[str, FluentFunction[ReturnT]]] = None,
+        functions: dict[str, FluentFunction[ReturnT]] | None = None,
     ) -> None:
         self._strict = strict
         self._default_language = default_language
@@ -69,7 +74,7 @@ class FluentStore(LocalizationProtocol):
 
         logger.info("FluentStore initialized.")
 
-    def get(self: Self, key: str) -> Optional[Dict[str, str]]:
+    def get(self: Self, key: str) -> dict[str, str] | None:
         """Localization retriever for disnake. You should use :meth:`.l10n` instead.
 
         Parameters
@@ -91,12 +96,12 @@ class FluentStore(LocalizationProtocol):
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
 
-        logger.debug(f"disnake requested localizations for key {key}")
+        logger.debug("disnake requested localizations for key %s", key)
 
         localizations = self._disnake_localization_cache.get(key)
 
         if not localizations:
-            logger.debug(f"disnake cache miss for key {key}")
+            logger.debug("disnake cache miss for key %s", key)
 
             localizations = {}
 
@@ -132,7 +137,9 @@ class FluentStore(LocalizationProtocol):
 
         logger.info("Setting up FluentStore.")
         logger.debug(
-            f"Constructing localizators for locales {self._langs} using resource {resources}.",
+            "Constructing localizators for locales %s using resource %s.",
+            self._langs,
+            resources,
         )
 
         self._loader = FluentResourceLoader(str(path) + "/{locale}")
@@ -148,14 +155,15 @@ class FluentStore(LocalizationProtocol):
     def l10n(
         self: Self,
         key: str,
-        locale: Union[Locale, str],
-        values: Optional[Dict[str, Any]] = None,
-        cache: Optional[bool] = None,
-    ) -> Optional[str]:
+        locale: Locale | str,
+        values: dict[str, Any] | None = None,
+        *,
+        cache: bool | None = None,
+    ) -> str | None:
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
 
-        logger.debug(f"Localization requested for key {key} and locale {locale!s}.")
+        logger.debug("Localization requested for key %s and locale %s.", key, locale)
 
         cache = cache or FluentStore.CACHE_BY_DEFAULT
         cache_key = key + ":" + str(locale) + ":" + str(values)
@@ -164,7 +172,7 @@ class FluentStore(LocalizationProtocol):
             if cached := self._localization_cache.get(cache_key):
                 return cached
 
-            logger.debug(f"Regular cache miss for key {key} and locale {locale!s}.")
+            logger.debug("Regular cache miss for key %s and locale %s.", key, locale)
 
         localizator = self._localizators.get(str(locale))
 

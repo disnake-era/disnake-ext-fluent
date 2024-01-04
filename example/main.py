@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-3.0-only
 
-import os
 import contextlib
+import os
 
 import disnake
 from disnake.ext import commands, fluent  # This library is packaged as disnake.ext.fluent
@@ -39,11 +39,11 @@ bot.i18n.load("example/locale/")
 
 @bot.event
 async def on_ready() -> None:
-    print("Ready to go!")
+    pass
 
 
 @bot.slash_command(  # type: ignore[reportUnknownMemberType]  # please ignore this
-    description = disnake.Localized("Oops, something went wrong.", key = "example_desc"))
+    description=disnake.Localized("Oops, something went wrong.", key="example_desc"))
 async def example(inter: disnake.AppCmdInter) -> None:
     await inter.response.send_message(
         # One would usually create a helper function for localizing stuff,
