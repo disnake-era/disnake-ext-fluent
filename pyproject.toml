@@ -186,6 +186,9 @@ ignore = [
     "E501",    # incompat w/ ruff format
     "COM812",  # incompat w/ ruff format
     "ISC001",  # incompat w/ ruff format
+    "ANN101",  # requires self: Self
+    "TD002",   # requires author in TODOs
+    "TD003",   # requires issue link in TODOs
 ]
 
 [tool.ruff.per-file-ignores]
