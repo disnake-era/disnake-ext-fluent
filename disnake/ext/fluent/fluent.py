@@ -45,6 +45,7 @@ class FluentStore(LocalizationProtocol):
         from FTLs, value is any function that returns a :class:`FluentType`.
 
     .. versionadded:: 0.1.0
+
     """
 
     CACHE_BY_DEFAULT: ClassVar[bool] = False
@@ -94,6 +95,7 @@ class FluentStore(LocalizationProtocol):
         dict[str, str] | None
             The localizations for the provided key.
             Returns ``None`` if no localizations could be found.
+
         """
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
@@ -128,6 +130,7 @@ class FluentStore(LocalizationProtocol):
         ------
         :exc:`RuntimeError`
             The provided path is invalid or couldn't be loaded.
+
         """
         path = Path(path)
 
@@ -186,6 +189,7 @@ class FluentStore(LocalizationProtocol):
         -------
         str
             The localized string.
+
         """
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")

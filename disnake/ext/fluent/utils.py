@@ -19,7 +19,7 @@ def search_ftl_files(path: PathT) -> list[str]:
 
     Returns
     -------
-    List[:class:`os.PathLike`]
+    list[:class:`os.PathLike`]
         A list of paths to FTL files.
     """
     path = Path(path)
@@ -40,7 +40,7 @@ def search_languages(path: PathT) -> list[str]:
 
     Returns
     -------
-    List[:class:`str`]
+    list[str]
         A list of languages.
     """
     path = Path(path)
