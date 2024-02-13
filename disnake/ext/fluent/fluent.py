@@ -27,20 +27,22 @@ class FluentStore(LocalizationProtocol):
 
     Attributes
     ----------
-    CACHE_BY_DEFAULT: ClassVar[:class:`str`]
-        Controls the default value for ``cache`` in :meth:`.l10n`.
-        Does not affect caching of static-by-definition keys like
-        application commands' names/descriptions.
+    CACHE_BY_DEFAULT: ClassVar[str]
+        Controls the default value for ``cache`` in :meth:`.l10n`. Does not affect caching
+        of "static-by-definition" keys like application commands' names/descriptions.
         Defaults to ``False``.
 
     Parameters
     ----------
-    strict: :class:`bool`
+    strict: bool
         If ``True``, the store will raise :exc:`disnake.LocalizationKeyError` if a key or
         locale is not found.
-    default_language: :class:`str`
+    default_language: str
         The "fallback" language to use if localization for the desired languages is not found.
         Defaults to ``"en-US"``.
+    functions: dict[str, FluentFunction] | None
+        Custom functions to expose to FTLs. Key is the name of the function as should be accessible
+        from FTLs, value is any function that returns a :class:`FluentType`.
 
     .. versionadded:: 0.1.0
     """
@@ -79,29 +81,29 @@ class FluentStore(LocalizationProtocol):
 
         Parameters
         ----------
-        key: :class:`str`
+        key: str
             The lookup key.
 
         Raises
         ------
-        LocalizationKeyError
+        :exc:`disnake.LocalizationKeyError`
             No localizations for the provided key were found.
 
         Returns
         -------
-        Optional[Dict[:class:`str`, :class:`str`]]
+        dict[str, str] | None
             The localizations for the provided key.
             Returns ``None`` if no localizations could be found.
         """
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
 
-        logger.debug("disnake requested localizations for key %s", key)
+        logger.debug("disnake requested localizations for key '%s'.", key)
 
         localizations: dict[str, str | None] | None = self._disnake_localization_cache.get(key)
 
         if not localizations:
-            logger.debug("disnake cache miss for key %s", key)
+            logger.debug("disnake cache miss for key '%s'.", key)
 
             localizations = {}
 
@@ -115,17 +117,17 @@ class FluentStore(LocalizationProtocol):
     def load(self, path: PathT) -> None:
         """Initialize all internal attributes.
 
-        `path` must point to a directory structured as per Fluent's guidelines.
+        ``path`` must point to a directory structured as per Fluent's guidelines.
 
         Parameters
         ----------
-        path: Union[:class:`str`, :class:`os.PathLike`]
+        path: str | :class:`os.PathLike`
             The path to the Fluent localization directory to load.
 
         Raises
         ------
-        RuntimeError
-            The provided path is invalid or couldn't be loaded
+        :exc:`RuntimeError`
+            The provided path is invalid or couldn't be loaded.
         """
         path = Path(path)
 
@@ -137,7 +139,7 @@ class FluentStore(LocalizationProtocol):
 
         logger.info("Setting up FluentStore.")
         logger.debug(
-            "Constructing localizators for locales %s using resource %s.",
+            "Constructing localizators for locales '%s' using resource '%s'.",
             self._langs,
             resources,
         )
@@ -160,10 +162,35 @@ class FluentStore(LocalizationProtocol):
         *,
         cache: bool | None = None,
     ) -> str | None:
+        """Localize a key into the specified locale using the specified values.
+
+        Parameters
+        ----------
+        key: str
+            The localization key.
+        locale: :class:`Locale` | str
+            The locale.
+        values: dict | None
+            The mapping of values (parameters) to expose to the localization.
+        cache: bool | None
+            Whether to cache the result. Generally, static strings should be cached, and
+            dynamic (those using functions in particular, but sometimes also parametrized
+            ones) should not.
+
+        Raises
+        ------
+        :exc:`disnake.LocalizationKeyError`
+            No localizations for the provided key were found.
+
+        Returns
+        -------
+        str
+            The localized string.
+        """
         if not self._loader:
             raise RuntimeError("FluentStore was not initialized yet.")
 
-        logger.debug("Localization requested for key %s and locale %s.", key, locale)
+        logger.debug("Localization requested for key '%s' and locale '%s'.", key, locale)
 
         cache = cache or FluentStore.CACHE_BY_DEFAULT
         cache_key = key + ":" + str(locale) + ":" + str(values)
@@ -172,12 +199,12 @@ class FluentStore(LocalizationProtocol):
             if cached := self._localization_cache.get(cache_key):
                 return cached
 
-            logger.debug("Regular cache miss for key %s and locale %s.", key, locale)
+            logger.debug("Regular cache miss for key '%s' and locale '%s'.", key, locale)
 
         localizator = self._localizators.get(str(locale))
 
         if not localizator:
-            warnings.warn(f"Localizator not found for locale {locale!s}.", LocalizationWarning)
+            warnings.warn(f"Localizator not found for locale '{locale!s}'.", LocalizationWarning)
             return None
 
         values = values or {}
@@ -192,9 +219,9 @@ class FluentStore(LocalizationProtocol):
         # translation was *not* found
 
         if self._strict:
-            raise LocalizationKeyError(f"Key {key} not found for locale {locale!s}.")
+            raise LocalizationKeyError(f"Key '{key}' not found for locale '{locale!s}'.")
 
-        warnings.warn(f"Key {key} not found for locale {locale!s}.", LocalizationWarning)
+        warnings.warn(f"Key '{key}' not found for locale '{locale!s}'.", LocalizationWarning)
 
         return None
 
