@@ -5,9 +5,7 @@ from __future__ import annotations
 import logging
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar
-
-from typing_extensions import Self
+from typing import TYPE_CHECKING
 
 from disnake import Locale, LocalizationKeyError, LocalizationProtocol, LocalizationWarning
 from fluent.runtime import FluentLocalization as FluentLocalizator
@@ -16,6 +14,8 @@ from fluent.runtime import FluentResourceLoader
 from .utils import search_ftl_files, search_languages
 
 if TYPE_CHECKING:
+    from typing import Any, ClassVar
+
     from .types import FluentFunction, PathT, ReturnT
 
 __all__ = ("FluentStore",)
@@ -57,7 +57,7 @@ class FluentStore(LocalizationProtocol):
     _functions: dict[str, FluentFunction[Any]] | None
 
     def __init__(
-        self: Self,
+        self,
         *,
         strict: bool = False,
         default_language: str = "en-US",
@@ -74,7 +74,7 @@ class FluentStore(LocalizationProtocol):
 
         logger.info("FluentStore initialized.")
 
-    def get(self: Self, key: str) -> dict[str, str] | None:
+    def get(self, key: str) -> dict[str, str] | None:
         """Localization retriever for disnake. You should use :meth:`.l10n` instead.
 
         Parameters
@@ -112,7 +112,7 @@ class FluentStore(LocalizationProtocol):
 
         return localizations  # type: ignore # disnake *does* support this
 
-    def load(self: Self, path: PathT) -> None:
+    def load(self, path: PathT) -> None:
         """Initialize all internal attributes.
 
         `path` must point to a directory structured as per Fluent's guidelines.
@@ -153,7 +153,7 @@ class FluentStore(LocalizationProtocol):
             )
 
     def l10n(
-        self: Self,
+        self,
         key: str,
         locale: Locale | str,
         values: dict[str, Any] | None = None,
@@ -198,7 +198,7 @@ class FluentStore(LocalizationProtocol):
 
         return None
 
-    def reload(self: Self) -> None:
+    def reload(self) -> None:
         """Clear localizations and reload all previously loaded FTLs again.
 
         If an exception occurs, the previous data gets restored and the exception is re-raised.
