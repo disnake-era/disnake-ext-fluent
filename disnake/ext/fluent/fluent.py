@@ -52,7 +52,7 @@ class FluentStore(LocalizationProtocol):
 
     _strict: bool
     _default_language: str
-    _langs: list[str]
+    _langs: list[Path]
     _loader: FluentResourceLoader | None
     _localizators: dict[str, FluentLocalizator]
     _localization_cache: dict[str, str]
@@ -110,7 +110,7 @@ class FluentStore(LocalizationProtocol):
             localizations = {}
 
             for lang in self._langs:
-                localizations[lang] = self.l10n(key, lang)
+                localizations[str(lang)] = self.l10n(key, str(lang))
 
             self._disnake_localization_cache[key] = localizations
 
@@ -150,8 +150,8 @@ class FluentStore(LocalizationProtocol):
         self._loader = FluentResourceLoader(str(path) + "/{locale}")
 
         for lang in self._langs:
-            self._localizators[lang] = FluentLocalizator(
-                [lang, self._default_language],
+            self._localizators[str(lang)] = FluentLocalizator(
+                [str(lang), self._default_language],
                 resources,
                 self._loader,
                 functions=self._functions,
