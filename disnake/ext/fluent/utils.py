@@ -19,7 +19,7 @@ def search_ftl_files(path: PathT) -> list[str]:
 
     Returns
     -------
-    List[:class:`os.PathLike`]
+    list[:class:`os.PathLike`]
         A list of paths to FTL files.
     """
     path = Path(path)
@@ -30,7 +30,7 @@ def search_ftl_files(path: PathT) -> list[str]:
     return [str(Path(*(file.parts[2:]))) for file in path.glob("**/*.ftl")]
 
 
-def search_languages(path: PathT) -> list[str]:
+def search_languages(path: PathT) -> list[Path]:
     """Search for languages in the provided directory.
 
     Parameters
@@ -40,7 +40,7 @@ def search_languages(path: PathT) -> list[str]:
 
     Returns
     -------
-    List[:class:`str`]
+    list[str]
         A list of languages.
     """
     path = Path(path)
@@ -48,4 +48,4 @@ def search_languages(path: PathT) -> list[str]:
     if not path.is_dir():
         raise RuntimeError(f"Path '{path}' does not exist or is not a directory.")
 
-    return [dir_.parts[-1] for dir_ in path.iterdir() if dir_.is_dir()]
+    return [Path(*dir_.parts[2:]) for dir_ in path.iterdir() if dir_.is_dir()]

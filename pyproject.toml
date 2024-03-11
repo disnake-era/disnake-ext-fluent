@@ -7,9 +7,8 @@ authors = [
     { name = "elenakrittik", email = "dev.elenakrittik@gmail.com" },
 ]
 dependencies = [
-    "disnake==2.9.*",
+    "disnake",
     "fluent-runtime>=0.4.0",
-    "typing-extensions>=4.7.1",
 ]
 requires-python = ">=3.9"
 readme = "README.md"
@@ -50,8 +49,8 @@ build-backend = "pdm.backend"
 
 [tool.pdm.dev-dependencies]
 dev = ["pre-commit>=3.6.0"]
-type-check = ["pyright>=1.1.344"]
-lint = ["ruff>=0.1.11"]
+type-check = ["pyright>=1.1.350"]
+lint = ["ruff>=0.2.1"]
 # N.B. Keep in sync with docs/requirements.txt
 docs = [
     "Sphinx>=7.2.6",
@@ -98,7 +97,7 @@ venv = ".venv"
 pythonVersion = "3.9"
 
 [tool.ruff]
-required-version = "0.1.11"
+required-version = "0.2.1"
 preview = true
 line-length = 100
 indent-width = 4
@@ -186,12 +185,17 @@ ignore = [
     "E501",    # incompat w/ ruff format
     "COM812",  # incompat w/ ruff format
     "ISC001",  # incompat w/ ruff format
+    "ANN101",  # requires self: Self
+    "TD002",   # requires author in TODOs
+    "TD003",   # requires issue link in TODOs
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "example/main.py" = [
     "DTZ011",  # requires explicit timezone in datetime functions
 ]
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
 
 [tool.towncrier]
 directory = "changelogs"

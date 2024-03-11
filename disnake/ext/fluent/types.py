@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 
 # re-exports
 __all__ = (
+    "FluentBool",
     "FluentDate",
     "FluentDateTime",
     "FluentDecimal",
@@ -33,7 +34,6 @@ __all__ = (
     "FluentInt",
     "FluentNone",
     "FluentNumber",
-    "FluentBool",
     "FluentTime",
     "FluentType",
 )
@@ -50,7 +50,7 @@ class FluentTime(FluentType):
     def __init__(self: Self, time_: datetime.time | None = None) -> None:
         self._time = time_ or datetime.datetime.now(tz=datetime.timezone.utc).time()
 
-    def format(self: Self, locale: babel.Locale) -> str:  # noqa: A003, ARG002
+    def format(self: Self, locale: babel.Locale) -> str:  # noqa: ARG002
         return format_time(self._time)
 
 
