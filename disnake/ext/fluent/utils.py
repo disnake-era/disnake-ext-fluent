@@ -48,4 +48,4 @@ def search_languages(path: PathT) -> list[Path]:
     if not path.is_dir():
         raise RuntimeError(f"Path '{path}' does not exist or is not a directory.")
 
-    return [Path(*dir_.parts[2:]) for dir_ in path.iterdir() if dir_.is_dir()]
+    return [Path(*dir_.parts[1:]) for dir_ in path.iterdir() if dir_.is_dir()]
