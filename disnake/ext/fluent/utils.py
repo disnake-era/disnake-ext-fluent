@@ -27,7 +27,7 @@ def search_ftl_files(path: PathT) -> list[str]:
     if not path.is_dir():
         raise RuntimeError(f"Path '{path}' does not exist or is not a directory.")
 
-    return [file.parts[-1] for file in path.glob("**/*.ftl")]
+    return [str(Path(*(file.parts[2:]))) for file in path.glob("**/*.ftl")]
 
 
 def search_languages(path: PathT) -> list[str]:
