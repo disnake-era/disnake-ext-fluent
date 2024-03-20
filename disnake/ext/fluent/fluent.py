@@ -14,7 +14,7 @@ from fluent.runtime import FluentResourceLoader
 from .utils import search_ftl_files, search_languages
 
 if TYPE_CHECKING:
-    from typing import Any, ClassVar
+    from typing import Any
 
     from .types import FluentFunction, PathT, ReturnT
 
@@ -25,13 +25,6 @@ logger = logging.getLogger(__name__)
 class FluentStore(LocalizationProtocol):
     """:class:`disnake.LocalizationProtocol` implementation for Fluent.
 
-    Attributes
-    ----------
-    CACHE_BY_DEFAULT: ClassVar[str]
-        Controls the default value for ``cache`` in :meth:`.l10n`. Does not affect caching
-        of "static-by-definition" keys like application commands' names/descriptions.
-        Defaults to ``False``.
-
     Parameters
     ----------
     strict: bool
@@ -40,35 +33,49 @@ class FluentStore(LocalizationProtocol):
     default_language: str
         The "fallback" language to use if localization for the desired languages is not found.
         Defaults to ``"en-US"``.
+    default_message: str
+        The default message to use if a key is not found.
     functions: dict[str, FluentFunction] | None
         Custom functions to expose to FTLs. Key is the name of the function as should be accessible
         from FTLs, value is any function that returns a :class:`FluentType`.
+    cache_by_default: bool
+        Controls the default value for ``cache`` in :meth:`.l10n`. Does not affect caching
+        of "static-by-definition" keys like application commands' names/descriptions.
+        Defaults to ``False``.
 
     .. versionadded:: 0.1.0
 
+    .. versionchanged:: 0.2.0
+        Change CACHE_BY_DEFAULT from a class variable to an instance variable.
+
     """
 
-    CACHE_BY_DEFAULT: ClassVar[bool] = False
-
+    _cache_by_default: bool = False
     _strict: bool
     _default_language: str
+    _default_message: str
+    _functions: dict[str, FluentFunction[Any]] | None
+
     _langs: list[Path]
     _loader: FluentResourceLoader | None
     _localizators: dict[str, FluentLocalizator]
     _localization_cache: dict[str, str]
     _disnake_localization_cache: dict[str, dict[str, str | None]]
-    _functions: dict[str, FluentFunction[Any]] | None
 
     def __init__(
         self,
         *,
         strict: bool = False,
         default_language: str = "en-US",
+        default_message: str = "<untranslated>",
         functions: dict[str, FluentFunction[ReturnT]] | None = None,
+        cache_by_default: bool = False,
     ) -> None:
         self._strict = strict
         self._default_language = default_language
+        self._default_message = default_message
         self._functions = functions
+        self._cache_by_default = cache_by_default
 
         self._loader = None
         self._localizators = {}
@@ -164,7 +171,7 @@ class FluentStore(LocalizationProtocol):
         values: dict[str, Any] | None = None,
         *,
         cache: bool | None = None,
-    ) -> str | None:
+    ) -> str:
         """Localize a key into the specified locale using the specified values.
 
         Parameters
@@ -196,7 +203,7 @@ class FluentStore(LocalizationProtocol):
 
         logger.debug("Localization requested for key '%s' and locale '%s'.", key, locale)
 
-        cache = cache or FluentStore.CACHE_BY_DEFAULT
+        cache = cache if cache is not None else self._cache_by_default
         cache_key = key + ":" + str(locale) + ":" + str(values)
 
         if cache:
@@ -209,7 +216,7 @@ class FluentStore(LocalizationProtocol):
 
         if not localizator:
             warnings.warn(f"Localizator not found for locale '{locale!s}'.", LocalizationWarning)
-            return None
+            return self._default_message
 
         values = values or {}
 
@@ -227,7 +234,7 @@ class FluentStore(LocalizationProtocol):
 
         warnings.warn(f"Key '{key}' not found for locale '{locale!s}'.", LocalizationWarning)
 
-        return None
+        return self._default_message
 
     def reload(self) -> None:
         """Clear localizations and reload all previously loaded FTLs again.
